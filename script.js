@@ -39,19 +39,29 @@ let toastTimer;
 // GENERAL UTILITIES
 // =====================================================
 
-function toast(message) {
-  const el = $("toast");
-  el.textContent = message;
-  el.classList.add("show");
+function formatHistoryTime(timestamp) {
+    const date = new Date(timestamp);
 
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+    if (isNaN(date.getTime())) {
+        return "";
+    }
+
+    return date.toLocaleString([], {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
 }
 
-function vibrate() {
-  try {
-    if (navigator.vibrate) navigator.vibrate(10);
-  } catch {}
+// =====================================================
+// PHASE 3 — HAPTIC FEEDBACK
+// =====================================================
+
+function vibrate(duration = 10) {
+    if ("vibrate" in navigator) {
+        navigator.vibrate(duration);
+    }
 }
 
 function formatNumber(n) {
@@ -70,10 +80,42 @@ function getNumber(id) {
   return Number($(id).value);
 }
 
-function copyText(text) {
-  navigator.clipboard?.writeText(String(text))
-    .then(() => toast("Copied"))
-    .catch(() => toast("Copy unavailable"));
+// =====================================================
+// PHASE 3 — RELIABLE COPY FUNCTION
+// =====================================================
+
+async function copyText(text) {
+    text = String(text ?? "");
+
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+        } else {
+            const temp = document.createElement("textarea");
+
+            temp.value = text;
+            temp.style.position = "fixed";
+            temp.style.opacity = "0";
+            temp.style.left = "-9999px";
+
+            document.body.appendChild(temp);
+            temp.select();
+
+            const copied = document.execCommand("copy");
+            temp.remove();
+
+            if (!copied) {
+                throw new Error("Copy failed");
+            }
+        }
+
+        toast("Copied successfully!");
+        vibrate(12);
+
+    } catch (error) {
+        toast("Unable to copy");
+        console.error("Clipboard error:", error);
+    }
 }
 
 function safeParseNumbers(value) {
@@ -93,11 +135,6 @@ function saveSettings() {
   storage.set("calcAngle", angleMode);
   storage.set("calcMemory", memory);
 }
-
-
-// =====================================================
-// NAVIGATION
-// =====================================================
 
 // =====================================================
 // NAVIGATION
@@ -136,10 +173,6 @@ document.querySelectorAll(".nav-btn").forEach(button => {
         vibrate();
     });
 });
-
-// =====================================================
-// THEME
-// =====================================================
 
 /* ==========================
    THEME INITIALIZATION
@@ -438,30 +471,62 @@ document.querySelectorAll("[data-action]").forEach(button => {
 // KEYBOARD INPUT
 // =====================================================
 
-document.addEventListener("keydown", event => {
-  if (
-    event.target.matches("input, select") ||
-    $("historyModal").classList.contains("hidden") === false
-  ) {
-    return;
-  }
+// =====================================================
+// PHASE 3 — IMPROVED KEYBOARD SUPPORT
+// =====================================================
 
-  if (/^[0-9.]$/.test(event.key)) insertCalc(event.key);
-  else if (["+", "-", "*", "/", "^", "%", "(", ")"].includes(event.key)) {
-    insertCalc(event.key);
-  }
-  else if (event.key === "Enter" || event.key === "=") {
-    event.preventDefault();
-    calculate();
-  }
-  else if (event.key === "Backspace") {
-    backspace();
-  }
-  else if (event.key === "Escape") {
-    clearCalc();
-  }
+document.addEventListener("keydown", (event) => {
+    const tag = document.activeElement?.tagName;
+
+    // Don't interfere with typing into forms
+    if (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        document.activeElement?.isContentEditable
+    ) {
+        return;
+    }
+
+    // Don't interfere with history modal
+    if (!$("#historyModal").classList.contains("hidden")) {
+        if (event.key === "Escape") {
+            $("#historyModal").classList.add("hidden");
+        }
+        return;
+    }
+
+    if (/^[0-9]$/.test(event.key)) {
+        insertCalc(event.key);
+        vibrate(8);
+        return;
+    }
+
+    if (["+", "-", "*", "/", ".", "%", "(", ")"].includes(event.key)) {
+        insertCalc(event.key);
+        vibrate(8);
+        return;
+    }
+
+    if (event.key === "Enter" || event.key === "=") {
+        event.preventDefault();
+        calculate();
+        vibrate(15);
+        return;
+    }
+
+    if (event.key === "Backspace") {
+        event.preventDefault();
+        backspace();
+        vibrate(8);
+        return;
+    }
+
+    if (event.key === "Escape") {
+        clearCalc();
+        vibrate(12);
+    }
 });
-
 
 // =====================================================
 // MEMORY
@@ -495,84 +560,194 @@ $("copyBtn").addEventListener("click", () => {
 
 
 // =====================================================
-// HISTORY
+// PHASE 3 — HISTORY TIMESTAMPS
 // =====================================================
 
-function addHistory(exp, result) {
-  history.unshift({
-    exp,
-    result,
-    time: Date.now()
-  });
+// =====================================================
+// PHASE 3 — COMPLETE HISTORY SYSTEM
+// =====================================================
 
-  history = history.slice(0, 100);
-  storage.set("calcHistory", history);
-  renderHistory();
+function formatHistoryTime(timestamp) {
+    if (!timestamp) return "Previous calculation";
+
+    const date = new Date(timestamp);
+
+    if (isNaN(date.getTime())) {
+        return "Previous calculation";
+    }
+
+    return date.toLocaleString([], {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
 }
+
+
+// SAVE A CALCULATION
+
+function addHistory(expression, result) {
+    history.push({
+        expression: String(expression),
+        result: String(result),
+        timestamp: Date.now()
+    });
+
+    // Keep only the latest 100 entries
+    history = history.slice(-100);
+
+    storage.set("calcHistory", history);
+
+    renderHistory();
+}
+
+
+// RENDER HISTORY
 
 function renderHistory() {
-  const containers = [$("recentHistory"), $("fullHistory")];
+    const recentContainer = $("recentHistory");
+    const fullContainer = $("fullHistory");
 
-  containers.forEach(container => {
-    container.innerHTML = "";
+    function renderList(container, limit = Infinity) {
+        if (!container) return;
 
-    history.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "history-item";
+        container.innerHTML = "";
 
-      const exp = document.createElement("div");
-      exp.className = "h-expression";
-      exp.textContent = item.exp;
+        if (!history.length) {
+            container.innerHTML = `
+                <div class="history-empty">
+                    No calculations yet
+                </div>
+            `;
+            return;
+        }
 
-      const result = document.createElement("div");
-      result.className = "h-result";
-      result.textContent = item.result;
+        const entries = history
+            .map((item, index) => ({ item, index }))
+            .reverse()
+            .slice(0, limit);
 
-      div.append(exp, result);
+        entries.forEach(({ item, index }) => {
+            const row = document.createElement("div");
+            row.className = "history-item";
 
-      div.addEventListener("click", () => {
-        expression = item.exp;
-        lastResult = item.result;
-        updateDisplay();
-        $("historyModal").classList.add("hidden");
-        toast("Calculation restored");
-      });
+            const content = document.createElement("div");
+            content.className = "history-content";
 
-      container.appendChild(div);
-    });
-  });
+            const expressionEl = document.createElement("div");
+            expressionEl.className = "history-expression";
+            expressionEl.textContent = item.expression ?? "";
+
+            const resultEl = document.createElement("div");
+            resultEl.className = "history-result";
+            resultEl.textContent = item.result ?? "";
+
+            const timeEl = document.createElement("div");
+            timeEl.className = "history-time";
+            timeEl.textContent = formatHistoryTime(item.timestamp);
+
+            content.append(
+                expressionEl,
+                resultEl,
+                timeEl
+            );
+
+            // DELETE BUTTON
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "history-delete";
+            deleteBtn.textContent = "✕";
+            deleteBtn.title = "Delete calculation";
+            deleteBtn.setAttribute("aria-label", "Delete calculation");
+
+            deleteBtn.addEventListener("click", (event) => {
+                event.stopPropagation();
+
+                history.splice(index, 1);
+
+                storage.set("calcHistory", history);
+                renderHistory();
+
+                toast("History entry deleted");
+                vibrate(12);
+            });
+
+            // REUSE CALCULATION
+
+            content.addEventListener("click", () => {
+                expression = String(item.expression ?? "");
+                lastResult = String(item.result ?? "0");
+
+                updateDisplay();
+
+                $("historyModal").classList.add("hidden");
+
+                document.querySelectorAll(".page").forEach(page => {
+                    page.classList.remove("active");
+                });
+
+                document.querySelectorAll(".nav-btn").forEach(button => {
+                    button.classList.remove("active");
+                });
+
+                $("calculator").classList.add("active");
+
+                document.querySelector('[data-page="calculator"]')
+                    ?.classList.add("active");
+
+                toast("Calculation restored");
+            });
+
+            row.append(content, deleteBtn);
+            container.appendChild(row);
+        });
+    }
+
+    renderList(recentContainer, 5);
+    renderList(fullContainer);
 }
 
-const historyButton = $("historyBtn");
 
-if (historyButton) {
-    historyButton.addEventListener("click", () => {
-        $("historyModal").classList.remove("hidden");
-    });
-}
+// HISTORY MODAL
+
 $("viewHistory").addEventListener("click", () => {
-  $("historyModal").classList.remove("hidden");
+    renderHistory();
+    $("historyModal").classList.remove("hidden");
 });
 
 $("closeHistory").addEventListener("click", () => {
-  $("historyModal").classList.add("hidden");
+    $("historyModal").classList.add("hidden");
 });
 
 $("historyModal").addEventListener("click", event => {
-  if (event.target === $("historyModal")) {
-    $("historyModal").classList.add("hidden");
-  }
+    if (event.target === $("historyModal")) {
+        $("historyModal").classList.add("hidden");
+    }
 });
+
+
+// CLEAR ALL HISTORY
 
 $("clearHistory").addEventListener("click", () => {
-  history = [];
-  storage.set("calcHistory", history);
-  renderHistory();
-  toast("History cleared");
+    if (!history.length) {
+        toast("History is already empty");
+        return;
+    }
+
+    history = [];
+
+    storage.set("calcHistory", history);
+    renderHistory();
+
+    toast("History cleared");
+    vibrate(15);
 });
 
-renderHistory();
 
+// INITIAL HISTORY RENDER
+
+renderHistory();
 
 // =====================================================
 // PROGRAMMER CALCULATOR
@@ -1795,10 +1970,6 @@ if (scientificToggle && scientificToolbar) {
     });
 }
 
-/* ==========================
-   SPIDER CALC MENU
-========================== */
-
 // =====================================================
 // SPIDER CALC MENU
 // =====================================================
@@ -1846,3 +2017,64 @@ document.addEventListener("keydown", (event) => {
         closeToolsMenu();
     }
 });
+// =====================================================
+// PHASE 3 — GLOBAL BUTTON FEEDBACK
+// =====================================================
+
+document.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+
+    if (!button || button.disabled) return;
+
+    if (
+        button.matches(".key") ||
+        button.matches(".tool-button") ||
+        button.matches(".primary-btn") ||
+        button.matches(".secondary-btn") ||
+        button.matches(".icon-btn") ||
+        button.matches(".menu-item") ||
+        button.matches(".toggle-bit")
+    ) {
+        vibrate(8);
+    }
+});
+// =====================================================
+// PHASE 3 — DISPLAY SWIPE GESTURES
+// =====================================================
+
+(() => {
+    const display = document.querySelector(".display");
+
+    if (!display) return;
+
+    let startX = 0;
+    let startY = 0;
+
+    display.addEventListener("touchstart", (event) => {
+        const touch = event.changedTouches[0];
+
+        startX = touch.clientX;
+        startY = touch.clientY;
+    }, { passive: true });
+
+    display.addEventListener("touchend", (event) => {
+        const touch = event.changedTouches[0];
+
+        const diffX = touch.clientX - startX;
+        const diffY = touch.clientY - startY;
+
+        // Only count deliberate horizontal swipes
+        if (Math.abs(diffX) < 65) return;
+        if (Math.abs(diffX) < Math.abs(diffY)) return;
+
+        if (diffX > 0) {
+            backspace();
+            toast("Character deleted");
+        } else {
+            clearCalc();
+            toast("Calculator cleared");
+        }
+
+        vibrate(15);
+    }, { passive: true });
+})();
