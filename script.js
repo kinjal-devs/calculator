@@ -99,52 +99,57 @@ function saveSettings() {
 // NAVIGATION
 // =====================================================
 
+// =====================================================
+// NAVIGATION
+// =====================================================
+
 document.querySelectorAll(".nav-btn").forEach(button => {
-  button.addEventListener("click", () => {
+    button.addEventListener("click", () => {
+        const targetPage = document.getElementById(button.dataset.page);
 
-    document.querySelectorAll(".nav-btn").forEach(b => {
-      b.classList.remove("active");
+        if (!targetPage) {
+            console.error("Page not found:", button.dataset.page);
+            return;
+        }
+
+        document.querySelectorAll(".nav-btn").forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        document.querySelectorAll(".page").forEach(page => {
+            page.classList.remove("active");
+        });
+
+        button.classList.add("active");
+        targetPage.classList.add("active");
+
+        // Close menu
+        const overlay = document.getElementById("menuOverlay");
+
+        if (overlay) {
+            overlay.classList.add("hidden");
+            overlay.classList.remove("open");
+        }
+
+        document.body.style.overflow = "";
+
+        vibrate();
     });
-
-    document.querySelectorAll(".page").forEach(p => {
-      p.classList.remove("active");
-    });
-
-    button.classList.add("active");
-    $(button.dataset.page).classList.add("active");
-
-    // Close the tools menu after selecting a page
-    if (menuOverlay) {
-      menuOverlay.classList.add("hidden");
-    }
-
-    vibrate();
-  });
 });
-
 
 // =====================================================
 // THEME
 // =====================================================
 
+/* ==========================
+   THEME INITIALIZATION
+========================== */
+
 const savedTheme = storage.get("calcTheme", "dark");
 
 if (savedTheme === "light") {
-  document.body.classList.add("light");
+    document.body.classList.add("light");
 }
-
-$("themeBtn").addEventListener("click", () => {
-  document.body.classList.toggle("light");
-
-  const theme = document.body.classList.contains("light") ? "light" : "dark";
-  storage.set("calcTheme", theme);
-
-  $("themeBtn").textContent = theme === "light" ? "☾" : "☀";
-});
-
-$("themeBtn").textContent =
-  document.body.classList.contains("light") ? "☾" : "☀";
-
 
 // =====================================================
 // EXPRESSION PARSER
@@ -429,18 +434,6 @@ document.querySelectorAll("[data-action]").forEach(button => {
   });
 });
 
-$("angleBtn").addEventListener("click", () => {
-  angleMode = angleMode === "DEG" ? "RAD" : "DEG";
-
-  $("angleBtn").textContent = angleMode;
-  $("angleBtn").classList.toggle("rad-mode", angleMode === "RAD");
-
-  saveSettings();
-  updateDisplay();
-  vibrate();
-});
-
-
 // =====================================================
 // KEYBOARD INPUT
 // =====================================================
@@ -550,10 +543,13 @@ function renderHistory() {
   });
 }
 
-$("historyBtn").addEventListener("click", () => {
-  $("historyModal").classList.remove("hidden");
-});
+const historyButton = $("historyBtn");
 
+if (historyButton) {
+    historyButton.addEventListener("click", () => {
+        $("historyModal").classList.remove("hidden");
+    });
+}
 $("viewHistory").addEventListener("click", () => {
   $("historyModal").classList.remove("hidden");
 });
@@ -1778,12 +1774,75 @@ updateGate();
 
 // SCIENTIFIC MODE TOGGLE
 
+// SCIENTIFIC MODE TOGGLE
+
 const scientificToggle = document.getElementById("scientificToggle");
 const scientificToolbar = document.getElementById("scientificToolbar");
+const scientificArrow = document.getElementById("scientificArrow");
 
-scientificToggle.addEventListener("click", () => {
-    scientificToolbar.classList.toggle("hidden");
-    scientificToggle.classList.toggle("open");
+if (scientificToggle && scientificToolbar) {
+    scientificToggle.addEventListener("click", () => {
+        const opening = scientificToolbar.classList.contains("hidden");
 
-    vibrate();
+        scientificToolbar.classList.toggle("hidden");
+        scientificToggle.classList.toggle("open", opening);
+
+        if (scientificArrow) {
+            scientificArrow.textContent = opening ? "⌃" : "⌄";
+        }
+
+        vibrate();
+    });
+}
+
+/* ==========================
+   SPIDER CALC MENU
+========================== */
+
+// =====================================================
+// SPIDER CALC MENU
+// =====================================================
+
+const menuButton = document.getElementById("menuBtn");
+const menuOverlayElement = document.getElementById("menuOverlay");
+const menuCloseButton = document.getElementById("closeMenu");
+
+function openToolsMenu() {
+    if (!menuOverlayElement) return;
+
+    menuOverlayElement.classList.remove("hidden");
+    menuOverlayElement.classList.add("open");
+
+    document.body.style.overflow = "hidden";
+}
+
+function closeToolsMenu() {
+    if (!menuOverlayElement) return;
+
+    menuOverlayElement.classList.remove("open");
+    menuOverlayElement.classList.add("hidden");
+
+    document.body.style.overflow = "";
+}
+
+if (menuButton) {
+    menuButton.addEventListener("click", openToolsMenu);
+}
+
+if (menuCloseButton) {
+    menuCloseButton.addEventListener("click", closeToolsMenu);
+}
+
+if (menuOverlayElement) {
+    menuOverlayElement.addEventListener("click", (event) => {
+        if (event.target === menuOverlayElement) {
+            closeToolsMenu();
+        }
+    });
+}
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        closeToolsMenu();
+    }
 });

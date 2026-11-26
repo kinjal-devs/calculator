@@ -9,21 +9,9 @@
   </head>
   <body>
     <div class="app">
-      <header class="topbar">
-        <div class="brand">
-          <div class="brand-icon">∑</div>
-          <div>
-            <h1>Calcula</h1>
-            <small>Your personal calculator</small>
-          </div>
-        </div>
-
-        <div class="top-actions">
-          <button id="menuBtn" class="icon-btn" title="Tools menu">☰</button>
-          <button id="themeBtn" class="icon-btn" title="Change theme">☀</button>
-          <button id="historyBtn" class="icon-btn" title="History">↺</button>
-        </div>
-      </header>
+    <header class="topbar">
+    <button id="menuBtn" class="icon-btn" title="Tools menu">☰</button>
+</header>
 
       <!-- PASTE MENU DRAWER HERE -->
       <div class="menu-overlay hidden" id="menuOverlay">
@@ -102,23 +90,6 @@
               <div id="result" class="result">0</div>
             </div>
 
-            <div class="calc-toolbar scientific-toolbar hidden" id="scientificToolbar">
-              <button id="scientificToggle" class="scientific-toggle">
-                <span>⚛ SCIENTIFIC FUNCTIONS</span>
-                <span id="scientificArrow">⌄</span>
-              </button>
-              <button id="angleBtn" class="small-btn">DEG</button>
-              <button class="small-btn" data-calc="sin">sin</button>
-              <button class="small-btn" data-calc="cos">cos</button>
-              <button class="small-btn" data-calc="tan">tan</button>
-              <button class="small-btn" data-calc="sqrt">√</button>
-              <button class="small-btn" data-calc="log">log</button>
-              <button class="small-btn" data-calc="ln">ln</button>
-              <button class="small-btn" data-calc="π">π</button>
-              <button class="small-btn" data-calc="e">e</button>
-              <button class="small-btn" data-calc="^">xʸ</button>
-            </div>
-
             <div class="keypad">
               <button class="key utility" data-action="clear">AC</button>
               <button class="key utility" data-action="backspace">⌫</button>
@@ -145,14 +116,7 @@
               <button class="key" data-calc=".">.</button>
               <button class="key equals" data-action="equals">=</button>
             </div>
-
-            <div class="memory-row">
-              <button data-memory="MC">MC</button>
-              <button data-memory="MR">MR</button>
-              <button data-memory="M+">M+</button>
-              <button data-memory="M-">M−</button>
-              <button id="copyBtn">Copy</button>
-            </div>
+            <button id="copyBtn" class="copy-btn">Copy</button>
           </div>
 
           <div class="card">

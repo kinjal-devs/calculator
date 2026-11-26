@@ -36,10 +36,23 @@ body.light {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background-color: var(--bg);
+
+  background-image:
+    linear-gradient(
+      rgba(8, 8, 12, 0.60),
+      rgba(8, 8, 12, 0.72)
+    ),
+    url("assets/spiderman-keypad.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
   color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  transition: background .2s, color .2s;
+  transition: color .2s;
 }
 
 button, input, select {
@@ -952,36 +965,6 @@ main {
         transparent
     );
 }
-/* SCIENTIFIC MODE TOGGLE */
-
-.scientific-toggle {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 11px 14px;
-    border-radius: 12px;
-    border: 1px solid rgba(229, 57, 53, 0.35);
-    background: rgba(120, 20, 25, 0.15);
-    color: var(--text);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-#scientificArrow {
-    font-size: 18px;
-    transition: transform 0.2s ease;
-}
-
-.scientific-toggle.open #scientificArrow {
-    transform: rotate(180deg);
-}
-
-.scientific-toolbar {
-    overflow-x: auto;
-    scrollbar-width: none;
-}
 
 .scientific-toolbar::-webkit-scrollbar {
     display: none;
@@ -1006,4 +989,417 @@ main {
 
 #angleBtn:active {
     transform: scale(0.94);
+}
+/* MENU OVERLAY */
+
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(5px);
+}
+
+.menu-overlay.hidden {
+    display: none !important;
+}
+
+.menu-drawer {
+    width: min(310px, 85vw);
+    height: 100%;
+    overflow-y: auto;
+    padding: 24px 18px;
+    background: #111827;
+    border-right: 1px solid rgba(229, 57, 53, 0.35);
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.4);
+    animation: menuSlideIn 0.25s ease;
+}
+
+@keyframes menuSlideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+/* MENU VISIBILITY FIX */
+
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.menu-overlay.hidden {
+    display: none !important;
+}
+
+.menu-overlay.open {
+    display: flex !important;
+}
+
+.menu-drawer {
+    position: relative;
+    width: min(310px, 85vw);
+    height: 100%;
+    overflow-y: auto;
+    background: #111827;
+    padding: 24px 18px;
+    animation: menuSlideIn 0.25s ease;
+}
+
+@keyframes menuSlideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+/* FIX: RESTORE CALCULATOR KEYPAD */
+
+#calculator .keypad {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    width: 100%;
+    gap: 8px;
+}
+
+#calculator .keypad .key {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 45px;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+/* ===== SPIDER-MAN THEME FINAL OVERRIDE ===== */
+
+/* Calculator outer panel */
+#calculator .calculator-card {
+    background: rgba(10, 10, 18, 0.50) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(3px) !important;
+    -webkit-backdrop-filter: blur(3px) !important;
+}
+
+/* Number buttons */
+#calculator .key:not(.operator):not(.utility):not(.equals) {
+    background: rgba(15, 15, 25, 0.32) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+/* Red operators */
+#calculator .key.operator {
+    background: rgba(170, 20, 35, 0.50) !important;
+    border: 1px solid rgba(255, 70, 70, 0.40) !important;
+    color: #ff555f !important;
+}
+
+/* Blue utility buttons */
+#calculator .key.utility {
+    background: rgba(15, 50, 90, 0.45) !important;
+    border: 1px solid rgba(90, 150, 255, 0.30) !important;
+    color: #79b8ff !important;
+}
+
+/* RED EQUALS */
+#calculator .key.equals {
+    background: linear-gradient(145deg, #e53935, #920d19) !important;
+    border: 1px solid #ff5656 !important;
+    color: white !important;
+    box-shadow: 0 0 18px rgba(229, 57, 53, 0.35) !important;
+}
+
+/* ===== SPIDER WEB DISPLAY ===== */
+
+#calculator .display {
+    position: relative;
+    overflow: hidden;
+
+    background-color: rgba(12, 12, 22, 0.72) !important;
+
+    background-image:
+        radial-gradient(
+            circle at top right,
+            rgba(220, 35, 45, 0.18),
+            transparent 55%
+        ),
+        repeating-conic-gradient(
+            from 0deg at 100% 0%,
+            transparent 0deg 10deg,
+            rgba(255, 255, 255, 0.055) 10deg 10.5deg,
+            transparent 10.5deg 20deg
+        ),
+        repeating-radial-gradient(
+            circle at 100% 0%,
+            transparent 0 17px,
+            rgba(255, 255, 255, 0.055) 18px 19px,
+            transparent 20px 29px
+        ) !important;
+
+    border: 1px solid rgba(255, 70, 70, 0.22) !important;
+    border-radius: 20px;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* Memory row */
+#calculator .memory-row button {
+    background: rgba(15, 15, 25, 0.35) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+/* =====================================
+   SCROLLING FIX FOR SUB-FUNCTION PAGES
+===================================== */
+
+/* App stays within the screen */
+.app {
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Allow the main content area to scroll */
+main {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+/* Sub-function pages can grow naturally */
+.page.active:not(#calculator) {
+    height: auto !important;
+    min-height: min-content;
+    overflow: visible !important;
+    align-content: start;
+    padding-bottom: 25px;
+}
+
+/* Calculator itself remains fixed on screen */
+#calculator.page.active {
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Don't let the calculator keypad get pushed away */
+#calculator .calculator-card {
+    min-height: 0;
+}
+
+/* Smooth scrolling */
+main {
+    scroll-behavior: smooth;
+}
+/* ==========================================
+   SPIDER-MAN GLASS THEME — SUB-FUNCTION PAGES
+========================================== */
+
+/* Main cards and panels */
+.page:not(#calculator) .card,
+.page:not(#calculator) .calculator-card {
+    background: rgba(12, 12, 22, 0.58) !important;
+    border: 1px solid rgba(255, 255, 255, 0.13) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 20px;
+}
+
+/* Input fields and dropdowns */
+.page:not(#calculator) input,
+.page:not(#calculator) select {
+    background: rgba(15, 15, 25, 0.48) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.13) !important;
+    border-radius: 14px;
+}
+
+/* Input focus */
+.page:not(#calculator) input:focus,
+.page:not(#calculator) select:focus {
+    border-color: rgba(229, 57, 53, 0.65) !important;
+    box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.12) !important;
+}
+
+/* Primary action buttons */
+.page:not(#calculator) .primary-btn {
+    background: linear-gradient(145deg, #e53935, #a50e19) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 90, 90, 0.5) !important;
+    box-shadow: 0 0 15px rgba(229, 57, 53, 0.18);
+    border-radius: 14px;
+}
+
+/* Secondary tool buttons */
+.page:not(#calculator) .tool-button {
+    background: rgba(20, 20, 30, 0.50) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.13) !important;
+    backdrop-filter: blur(4px);
+}
+
+/* Segmented controls */
+.page:not(#calculator) .segmented {
+    background: rgba(10, 10, 20, 0.45) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.page:not(#calculator) .segmented button {
+    color: #b8b8c9 !important;
+    background: transparent !important;
+}
+
+.page:not(#calculator) .segmented button.active {
+    background: linear-gradient(145deg, #e53935, #a50e19) !important;
+    color: #ffffff !important;
+    border-radius: 10px;
+}
+
+/* Tool tabs */
+.page:not(#calculator) .tool-tabs button {
+    background: rgba(15, 15, 25, 0.50) !important;
+    color: #b8b8c9 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.page:not(#calculator) .tool-tabs button.active {
+    background: rgba(180, 20, 35, 0.65) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 70, 70, 0.5) !important;
+}
+
+/* Output boxes */
+.page:not(#calculator) .output-box,
+.page:not(#calculator) .number-box,
+.page:not(#calculator) .step,
+.page:not(#calculator) .info-box {
+    background: rgba(15, 15, 25, 0.48) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #eeeeF5 !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* Result highlights */
+.page:not(#calculator) .output-box strong,
+.page:not(#calculator) .number-box strong {
+    color: #ff626a !important;
+}
+
+/* Table */
+.page:not(#calculator) table {
+    background: rgba(10, 10, 20, 0.35);
+}
+
+.page:not(#calculator) th {
+    background: rgba(160, 20, 35, 0.35) !important;
+    color: #ff858b !important;
+}
+
+.page:not(#calculator) td {
+    background: rgba(15, 15, 25, 0.35);
+    color: #ffffff;
+}
+
+/* Logic gate panels */
+.page:not(#calculator) .gate-visual {
+    background: rgba(12, 12, 22, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.page:not(#calculator) .gate-symbol {
+    background: linear-gradient(145deg, #e53935, #a50e19) !important;
+    color: #ffffff;
+}
+
+/* Toggle bits */
+.page:not(#calculator) .toggle-bit {
+    background: rgba(150, 20, 35, 0.35) !important;
+    border: 1px solid rgba(255, 70, 70, 0.30);
+    color: #ff777e !important;
+}
+
+/* Math / college panels */
+.page:not(#calculator) .math-panel,
+.page:not(#calculator) .college-panel {
+    color: #ffffff;
+}
+
+/* Labels and descriptions */
+.page:not(#calculator) label {
+    color: #c0c0ce;
+}
+
+/* Sub-function headings */
+.page:not(#calculator) h2,
+.page:not(#calculator) h3 {
+    color: #ffffff;
+}
+
+/* Copy buttons */
+.page:not(#calculator) .text-btn {
+    color: #ff777e !important;
+}
+
+/* Error messages */
+.page:not(#calculator) .error {
+    color: #ff747e !important;
+}
+
+/* Scrollbar */
+main::-webkit-scrollbar {
+    width: 4px;
+}
+
+main::-webkit-scrollbar-thumb {
+    background: rgba(229, 57, 53, 0.45);
+    border-radius: 10px;
+}
+
+/* SPIDER GLASS COPY BUTTON */
+
+.copy-btn {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px;
+
+    background: rgba(15, 15, 25, 0.35) !important;
+    color: #ffffff !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: 0.2s ease;
+}
+
+.copy-btn:active {
+    transform: scale(0.96);
+    background: rgba(180, 20, 35, 0.4) !important;
 }
