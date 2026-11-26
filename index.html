@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#15151e" />
+    <title>Calcula — Personal Calculator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-icon">∑</div>
+          <div>
+            <h1>Calcula</h1>
+            <small>Your personal calculator</small>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button id="menuBtn" class="icon-btn" title="Tools menu">☰</button>
+          <button id="themeBtn" class="icon-btn" title="Change theme">☀</button>
+          <button id="historyBtn" class="icon-btn" title="History">↺</button>
+        </div>
+      </header>
+
+      <!-- PASTE MENU DRAWER HERE -->
+      <div class="menu-overlay hidden" id="menuOverlay">
+        <aside class="menu-drawer">
+          <div class="menu-brand">
+            <div class="spider-logo">🕷️</div>
+
+            <div class="brand-text">
+              <h2>SPIDER CALC</h2>
+              <p>YOUR FRIENDLY NEIGHBORHOOD CALCULATOR</p>
+            </div>
+
+            <button id="closeMenu" class="icon-btn">✕</button>
+          </div>
+
+          <div class="menu-divider"></div>
+
+          <p class="menu-subtitle">CALCULATOR TOOLS</p>
+
+          <button class="nav-btn menu-item active" data-page="calculator">
+            <span class="menu-icon">🧮</span>
+            <span class="menu-label">Calculator</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="programmer">
+            <span class="menu-icon">💻</span>
+            <span class="menu-label">Programmer</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="gray">
+            <span class="menu-icon">🔢</span>
+            <span class="menu-label">Gray Code</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="logic">
+            <span class="menu-icon">⚡</span>
+            <span class="menu-label">Logic Lab</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="matrix">
+            <span class="menu-icon">▦</span>
+            <span class="menu-label">Matrix</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="math">
+            <span class="menu-icon">π</span>
+            <span class="menu-label">Math Tools</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="college">
+            <span class="menu-icon">🎓</span>
+            <span class="menu-label">College Tools</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="converter">
+            <span class="menu-icon">🔄</span>
+            <span class="menu-label">Unit Converter</span>
+            <span class="menu-arrow">›</span>
+          </button>
+        </aside>
+      </div>
+
+      <main>
+        <!-- CALCULATOR -->
+        <section class="page active" id="calculator">
+          <div class="calculator-card">
+            <div class="display">
+              <div id="expression" class="expression">0</div>
+              <div id="result" class="result">0</div>
+            </div>
+
+            <div class="calc-toolbar scientific-toolbar hidden" id="scientificToolbar">
+              <button id="scientificToggle" class="scientific-toggle">
+                <span>⚛ SCIENTIFIC FUNCTIONS</span>
+                <span id="scientificArrow">⌄</span>
+              </button>
+              <button id="angleBtn" class="small-btn">DEG</button>
+              <button class="small-btn" data-calc="sin">sin</button>
+              <button class="small-btn" data-calc="cos">cos</button>
+              <button class="small-btn" data-calc="tan">tan</button>
+              <button class="small-btn" data-calc="sqrt">√</button>
+              <button class="small-btn" data-calc="log">log</button>
+              <button class="small-btn" data-calc="ln">ln</button>
+              <button class="small-btn" data-calc="π">π</button>
+              <button class="small-btn" data-calc="e">e</button>
+              <button class="small-btn" data-calc="^">xʸ</button>
+            </div>
+
+            <div class="keypad">
+              <button class="key utility" data-action="clear">AC</button>
+              <button class="key utility" data-action="backspace">⌫</button>
+              <button class="key utility" data-calc="%">%</button>
+              <button class="key operator" data-calc="/">÷</button>
+
+              <button class="key" data-calc="7">7</button>
+              <button class="key" data-calc="8">8</button>
+              <button class="key" data-calc="9">9</button>
+              <button class="key operator" data-calc="*">×</button>
+
+              <button class="key" data-calc="4">4</button>
+              <button class="key" data-calc="5">5</button>
+              <button class="key" data-calc="6">6</button>
+              <button class="key operator" data-calc="-">−</button>
+
+              <button class="key" data-calc="1">1</button>
+              <button class="key" data-calc="2">2</button>
+              <button class="key" data-calc="3">3</button>
+              <button class="key operator" data-calc="+">+</button>
+
+              <button class="key" data-action="sign">±</button>
+              <button class="key" data-calc="0">0</button>
+              <button class="key" data-calc=".">.</button>
+              <button class="key equals" data-action="equals">=</button>
+            </div>
+
+            <div class="memory-row">
+              <button data-memory="MC">MC</button>
+              <button data-memory="MR">MR</button>
+              <button data-memory="M+">M+</button>
+              <button data-memory="M-">M−</button>
+              <button id="copyBtn">Copy</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Recent calculations</h3>
+            <div id="recentHistory" class="history-list"></div>
+            <button class="text-btn" id="viewHistory">View all history</button>
+          </div>
+        </section>
+
+        <!-- PROGRAMMER -->
+        <section class="page" id="programmer">
+          <div class="card">
+            <div class="section-heading">
+              <div>
+                <h2>Programmer Calculator</h2>
+                <p>Convert between number systems instantly.</p>
+              </div>
+            </div>
+
+            <label>Input base</label>
+            <select id="progBase">
+              <option value="10">Decimal (DEC)</option>
+              <option value="2">Binary (BIN)</option>
+              <option value="8">Octal (OCT)</option>
+              <option value="16">Hexadecimal (HEX)</option>
+            </select>
+
+            <label>Enter number</label>
+            <input id="progInput" placeholder="Enter a number" value="26" />
+
+            <div class="number-grid">
+              <div class="number-box">
+                <span>DECIMAL</span>
+                <strong id="progDec">26</strong>
+                <button data-copy="progDec">Copy</button>
+              </div>
+              <div class="number-box">
+                <span>BINARY</span>
+                <strong id="progBin">11010</strong>
+                <button data-copy="progBin">Copy</button>
+              </div>
+              <div class="number-box">
+                <span>OCTAL</span>
+                <strong id="progOct">32</strong>
+                <button data-copy="progOct">Copy</button>
+              </div>
+              <div class="number-box">
+                <span>HEXADECIMAL</span>
+                <strong id="progHex">1A</strong>
+                <button data-copy="progHex">Copy</button>
+              </div>
+            </div>
+
+            <h3>Bit operations</h3>
+
+            <label>First number (decimal)</label>
+            <input id="bitA" type="number" value="12" />
+
+            <label>Second number (decimal)</label>
+            <input id="bitB" type="number" value="10" />
+
+            <div class="button-grid">
+              <button class="tool-button" data-bit="AND">AND</button>
+              <button class="tool-button" data-bit="OR">OR</button>
+              <button class="tool-button" data-bit="XOR">XOR</button>
+              <button class="tool-button" data-bit="NOT">NOT A</button>
+              <button class="tool-button" data-bit="LSHIFT">
+                A &lt;&lt; 1
+              </button>
+              <button class="tool-button" data-bit="RSHIFT">
+                A &gt;&gt; 1
+              </button>
+            </div>
+
+            <div class="output-box" id="bitResult">Result will appear here</div>
+
+            <h3>Complement calculator</h3>
+
+            <label>Binary input</label>
+            <input id="compInput" value="1010" />
+
+            <label>Bit width</label>
+            <select id="compWidth">
+              <option value="4">4-bit</option>
+              <option value="8" selected>8-bit</option>
+              <option value="16">16-bit</option>
+              <option value="32">32-bit</option>
+            </select>
+
+            <div class="number-grid">
+              <div class="number-box">
+                <span>1'S COMPLEMENT</span>
+                <strong id="onesComp">11110101</strong>
+              </div>
+              <div class="number-box">
+                <span>2'S COMPLEMENT</span>
+                <strong id="twosComp">11110110</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- GRAY CODE -->
+        <section class="page" id="gray">
+          <div class="card">
+            <h2>Binary ↔ Gray Code</h2>
+            <p>Convert between binary and Gray code.</p>
+
+            <div class="segmented">
+              <button class="active" data-gray-mode="binary">
+                Binary → Gray
+              </button>
+              <button data-gray-mode="gray">Gray → Binary</button>
+            </div>
+
+            <label id="grayLabel">Binary input</label>
+            <input
+              id="grayInput"
+              placeholder="Enter binary number"
+              value="1011"
+            />
+
+            <div class="output-box">
+              <span id="grayOutputLabel">Gray code</span>
+              <strong id="grayOutput">1110</strong>
+            </div>
+
+            <button class="primary-btn" id="grayConvert">Convert</button>
+
+            <div class="info-box">
+              <h3>How it works</h3>
+              <p id="grayExplanation">
+                Gray code is obtained by keeping the first binary bit and XORing
+                each binary bit with the bit immediately before it.
+              </p>
+            </div>
+
+            <h3>Conversion steps</h3>
+            <div id="graySteps" class="steps"></div>
+          </div>
+
+          <div class="card">
+            <h3>Gray code reference</h3>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Decimal</th>
+                    <th>Binary</th>
+                    <th>Gray</th>
+                  </tr>
+                </thead>
+                <tbody id="grayReference"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- LOGIC -->
+        <section class="page" id="logic">
+          <div class="card">
+            <h2>Logic Lab</h2>
+            <p>Experiment with digital logic gates.</p>
+
+            <label>Select gate</label>
+            <select id="gateSelect">
+              <option>AND</option>
+              <option>OR</option>
+              <option>NOT</option>
+              <option>NAND</option>
+              <option>NOR</option>
+              <option>XOR</option>
+              <option>XNOR</option>
+            </select>
+
+            <div class="gate-inputs">
+              <div>
+                <span>Input A</span>
+                <button class="toggle-bit" id="gateA">0</button>
+              </div>
+              <div id="gateBWrap">
+                <span>Input B</span>
+                <button class="toggle-bit" id="gateB">0</button>
+              </div>
+            </div>
+
+            <div class="gate-visual">
+              <div class="gate-line">A ─────┐</div>
+              <div class="gate-symbol" id="gateSymbol">AND</div>
+              <div class="gate-line">B ─────┘</div>
+              <div class="gate-result">
+                Output: <strong id="gateOutput">0</strong>
+              </div>
+            </div>
+
+            <h3>Truth table</h3>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>A</th>
+                    <th>B</th>
+                    <th>Output</th>
+                  </tr>
+                </thead>
+                <tbody id="gateTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Truth Table Generator</h2>
+            <p>Enter a Boolean expression using A, B, C.</p>
+
+            <input id="booleanExpression" value="A AND B OR NOT C" />
+
+            <div class="button-grid">
+              <button class="tool-button" data-bool=" AND ">AND</button>
+              <button class="tool-button" data-bool=" OR ">OR</button>
+              <button class="tool-button" data-bool=" XOR ">XOR</button>
+              <button class="tool-button" data-bool=" NOT ">NOT</button>
+              <button class="tool-button" data-bool="(">(</button>
+              <button class="tool-button" data-bool=")">)</button>
+            </div>
+
+            <button class="primary-btn" id="generateTruth">
+              Generate truth table
+            </button>
+
+            <div class="table-scroll">
+              <table>
+                <thead id="truthHead"></thead>
+                <tbody id="truthBody"></tbody>
+              </table>
+            </div>
+            <div id="truthError" class="error"></div>
+          </div>
+        </section>
+
+        <!-- MATRIX -->
+        <section class="page" id="matrix">
+          <div class="card">
+            <h2>Matrix Calculator</h2>
+            <p>
+              Add, subtract, multiply, transpose and find determinant or
+              inverse.
+            </p>
+
+            <label>Matrix size</label>
+            <select id="matrixSize">
+              <option value="2">2 × 2</option>
+              <option value="3" selected>3 × 3</option>
+            </select>
+
+            <div class="matrix-container">
+              <div>
+                <h3>Matrix A</h3>
+                <div id="matrixA" class="matrix-input"></div>
+              </div>
+              <div>
+                <h3>Matrix B</h3>
+                <div id="matrixB" class="matrix-input"></div>
+              </div>
+            </div>
+
+            <div class="button-grid">
+              <button class="tool-button" data-matrix="ADD">A + B</button>
+              <button class="tool-button" data-matrix="SUB">A − B</button>
+              <button class="tool-button" data-matrix="MUL">A × B</button>
+              <button class="tool-button" data-matrix="TA">Transpose A</button>
+              <button class="tool-button" data-matrix="TB">Transpose B</button>
+              <button class="tool-button" data-matrix="DA">
+                Determinant A
+              </button>
+              <button class="tool-button" data-matrix="DB">
+                Determinant B
+              </button>
+              <button class="tool-button" data-matrix="IA">Inverse A</button>
+              <button class="tool-button" data-matrix="IB">Inverse B</button>
+            </div>
+
+            <div id="matrixResult" class="output-box">Result appears here</div>
+          </div>
+        </section>
+
+        <!-- MATH -->
+        <section class="page" id="math">
+          <div class="card">
+            <h2>Math Tools</h2>
+
+            <div class="tool-tabs">
+              <button class="active" data-math-mode="stats">Statistics</button>
+              <button data-math-mode="equation">Equations</button>
+              <button data-math-mode="probability">Probability</button>
+              <button data-math-mode="complex">Complex</button>
+              <button data-math-mode="fraction">Fractions</button>
+            </div>
+
+            <!-- Statistics -->
+            <div class="math-panel active" id="statsPanel">
+              <h3>Statistics calculator</h3>
+              <p>Enter numbers separated by commas.</p>
+              <input id="statsInput" value="2, 4, 6, 8, 10" />
+
+              <button class="primary-btn" id="calculateStats">Calculate</button>
+
+              <div class="number-grid">
+                <div class="number-box">
+                  <span>COUNT</span><strong id="statCount">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>SUM</span><strong id="statSum">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>MEAN</span><strong id="statMean">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>MEDIAN</span><strong id="statMedian">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>MODE</span><strong id="statMode">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>RANGE</span><strong id="statRange">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>VARIANCE</span><strong id="statVariance">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>STD. DEV.</span><strong id="statSD">—</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Equations -->
+            <div class="math-panel" id="equationPanel">
+              <h3>Equation solver</h3>
+
+              <div class="segmented">
+                <button class="active" data-equation-type="linear">
+                  Linear
+                </button>
+                <button data-equation-type="quadratic">Quadratic</button>
+              </div>
+
+              <div id="linearInputs">
+                <p>ax + b = 0</p>
+                <div class="three-inputs">
+                  <input id="linearA" type="number" value="2" placeholder="a" />
+                  <input id="linearB" type="number" value="4" placeholder="b" />
+                </div>
+              </div>
+
+              <div id="quadraticInputs" class="hidden">
+                <p>ax² + bx + c = 0</p>
+                <div class="three-inputs">
+                  <input id="quadA" type="number" value="1" placeholder="a" />
+                  <input id="quadB" type="number" value="-5" placeholder="b" />
+                  <input id="quadC" type="number" value="6" placeholder="c" />
+                </div>
+              </div>
+
+              <button class="primary-btn" id="solveEquation">Solve</button>
+              <div id="equationResult" class="output-box">
+                Solutions appear here
+              </div>
+            </div>
+
+            <!-- Probability -->
+            <div class="math-panel" id="probabilityPanel">
+              <h3>Probability & Combinatorics</h3>
+
+              <label>n</label>
+              <input id="probN" type="number" value="5" />
+
+              <label>r</label>
+              <input id="probR" type="number" value="2" />
+
+              <button class="primary-btn" id="calculateProb">Calculate</button>
+
+              <div class="number-grid">
+                <div class="number-box">
+                  <span>n!</span><strong id="factorialResult">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>nPr</span><strong id="permutationResult">—</strong>
+                </div>
+                <div class="number-box">
+                  <span>nCr</span><strong id="combinationResult">—</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Complex -->
+            <div class="math-panel" id="complexPanel">
+              <h3>Complex Number Calculator</h3>
+
+              <label>Complex number A</label>
+              <div class="three-inputs">
+                <input
+                  id="complexAR"
+                  type="number"
+                  value="3"
+                  placeholder="Real"
+                />
+                <input
+                  id="complexAI"
+                  type="number"
+                  value="2"
+                  placeholder="Imaginary"
+                />
+              </div>
+
+              <label>Complex number B</label>
+              <div class="three-inputs">
+                <input
+                  id="complexBR"
+                  type="number"
+                  value="1"
+                  placeholder="Real"
+                />
+                <input
+                  id="complexBI"
+                  type="number"
+                  value="4"
+                  placeholder="Imaginary"
+                />
+              </div>
+
+              <div class="button-grid">
+                <button class="tool-button" data-complex="ADD">A + B</button>
+                <button class="tool-button" data-complex="SUB">A − B</button>
+                <button class="tool-button" data-complex="MUL">A × B</button>
+                <button class="tool-button" data-complex="DIV">A ÷ B</button>
+              </div>
+
+              <div id="complexResult" class="output-box">
+                Result appears here
+              </div>
+            </div>
+
+            <!-- Fractions -->
+            <div class="math-panel" id="fractionPanel">
+              <h3>Fraction Calculator</h3>
+
+              <div class="three-inputs">
+                <input
+                  id="fracA"
+                  type="number"
+                  value="1"
+                  placeholder="Numerator A"
+                />
+                <input
+                  id="fracB"
+                  type="number"
+                  value="2"
+                  placeholder="Denominator A"
+                />
+              </div>
+
+              <div class="three-inputs">
+                <input
+                  id="fracC"
+                  type="number"
+                  value="1"
+                  placeholder="Numerator B"
+                />
+                <input
+                  id="fracD"
+                  type="number"
+                  value="3"
+                  placeholder="Denominator B"
+                />
+              </div>
+
+              <div class="button-grid">
+                <button class="tool-button" data-fraction="ADD">+</button>
+                <button class="tool-button" data-fraction="SUB">−</button>
+                <button class="tool-button" data-fraction="MUL">×</button>
+                <button class="tool-button" data-fraction="DIV">÷</button>
+              </div>
+
+              <div id="fractionResult" class="output-box">
+                Result appears here
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COLLEGE -->
+        <section class="page" id="college">
+          <div class="card">
+            <h2>College Tools</h2>
+
+            <div class="tool-tabs">
+              <button class="active" data-college-mode="marks">Marks</button>
+              <button data-college-mode="attendance">Attendance</button>
+              <button data-college-mode="target">Exam Target</button>
+              <button data-college-mode="gpa">GPA</button>
+            </div>
+
+            <div class="college-panel active" id="marksPanel">
+              <h3>Percentage calculator</h3>
+              <label>Marks obtained</label>
+              <input id="marksObtained" type="number" value="420" />
+
+              <label>Total marks</label>
+              <input id="marksTotal" type="number" value="500" />
+
+              <button class="primary-btn" id="calculateMarks">
+                Calculate percentage
+              </button>
+              <div id="marksResult" class="output-box">—</div>
+            </div>
+
+            <div class="college-panel" id="attendancePanel">
+              <h3>Attendance calculator</h3>
+
+              <label>Classes attended</label>
+              <input id="attended" type="number" value="36" />
+
+              <label>Total classes conducted</label>
+              <input id="conducted" type="number" value="45" />
+
+              <label>Required attendance (%)</label>
+              <input id="requiredAttendance" type="number" value="75" />
+
+              <button class="primary-btn" id="calculateAttendance">
+                Calculate
+              </button>
+              <div id="attendanceResult" class="output-box">—</div>
+            </div>
+
+            <div class="college-panel" id="targetPanel">
+              <h3>Exam target calculator</h3>
+
+              <label>Current marks</label>
+              <input id="targetCurrent" type="number" value="35" />
+
+              <label>Total marks</label>
+              <input id="targetTotal" type="number" value="100" />
+
+              <label>Desired percentage</label>
+              <input id="targetPercent" type="number" value="80" />
+
+              <button class="primary-btn" id="calculateTarget">
+                Calculate target
+              </button>
+              <div id="targetResult" class="output-box">—</div>
+            </div>
+
+            <div class="college-panel" id="gpaPanel">
+              <h3>GPA / CGPA calculator</h3>
+              <p>Enter grades and credits. Add more subjects as needed.</p>
+
+              <div id="gpaRows"></div>
+
+              <button class="tool-button" id="addGpaRow">＋ Add subject</button>
+              <button class="primary-btn" id="calculateGpa">
+                Calculate GPA
+              </button>
+              <div id="gpaResult" class="output-box">—</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONVERTER -->
+        <section class="page" id="converter">
+          <div class="card">
+            <h2>Unit Converter</h2>
+
+            <label>Category</label>
+            <select id="unitCategory">
+              <option value="length">Length</option>
+              <option value="mass">Mass</option>
+              <option value="time">Time</option>
+              <option value="temperature">Temperature</option>
+              <option value="area">Area</option>
+              <option value="volume">Volume</option>
+              <option value="speed">Speed</option>
+              <option value="data">Digital storage</option>
+            </select>
+
+            <label>From</label>
+            <select id="unitFrom"></select>
+
+            <label>To</label>
+            <select id="unitTo"></select>
+
+            <label>Value</label>
+            <input id="unitValue" type="number" value="1" />
+
+            <button class="primary-btn" id="convertUnits">Convert</button>
+
+            <div id="unitResult" class="output-box">—</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div class="modal hidden" id="historyModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Calculation History</h2>
+          <button id="closeHistory" class="icon-btn">✕</button>
+        </div>
+
+        <div id="fullHistory" class="history-list"></div>
+
+        <button class="danger-btn" id="clearHistory">Clear history</button>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
