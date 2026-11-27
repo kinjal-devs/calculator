@@ -176,6 +176,8 @@ document.querySelectorAll(".nav-btn").forEach(button => {
         });
 
         button.classList.add("active");
+           const menuToggle = document.getElementById("menuToggle");
+           if (menuToggle) menuToggle.checked = false;
         targetPage.classList.add("active");
 
         // Close menu

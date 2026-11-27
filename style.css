@@ -1872,3 +1872,22 @@ div:has(> [data-math-mode]) {
         padding: 8px 5px !important;
     }
 }
+
+/* Reliable CSS-driven menu toggle */
+.menu-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.menu-trigger,
+.menu-close {
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+#menuToggle:checked ~ #menuOverlay {
+  display: flex !important;
+}

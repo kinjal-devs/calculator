@@ -9,8 +9,9 @@
   </head>
   <body>
     <div class="app">
+      <input type="checkbox" id="menuToggle" class="menu-toggle" aria-label="Open tools menu" />
       <header class="topbar">
-        <button id="menuBtn" class="icon-btn" title="Tools menu">☰</button>
+        <label id="menuBtn" class="icon-btn menu-trigger" for="menuToggle" title="Tools menu">☰</label>
       </header>
 
       <!-- PASTE MENU DRAWER HERE -->
@@ -24,7 +25,7 @@
               <p>YOUR FRIENDLY NEIGHBORHOOD CALCULATOR</p>
             </div>
 
-            <button id="closeMenu" class="icon-btn">✕</button>
+            <label id="closeMenu" class="icon-btn menu-close" for="menuToggle" title="Close menu">✕</label>
           </div>
 
           <div class="menu-divider"></div>
