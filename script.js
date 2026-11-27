@@ -25,7 +25,11 @@ const storage = {
 let expression = "";
 let lastResult = "0";
 let memory = storage.get("calcMemory", 0);
+if (typeof memory !== "number" || !Number.isFinite(memory)) memory = 0;
 let history = storage.get("calcHistory", []);
+history = Array.isArray(history)
+  ? history.filter(item => item && typeof item === "object" && typeof item.expression === "string" && typeof item.result === "string").slice(-100)
+  : [];
 let angleMode = storage.get("calcAngle", "DEG");
 let grayMode = "binary";
 let gateA = 0;
@@ -33,14 +37,16 @@ let gateB = 0;
 let equationType = "linear";
 let matrixSize = 3;
 let toastTimer;
+let lastVibrationAt = 0;
 
 // =====================================================
-// PHASE 3 — HAPTIC FEEDBACK
+// PHASE 4 — SAFE HAPTIC FEEDBACK
 // =====================================================
 
 function vibrate(duration = 10) {
-    if ("vibrate" in navigator) {
+    if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
         navigator.vibrate(duration);
+        lastVibrationAt = Date.now();
     }
 }
 
@@ -214,11 +220,11 @@ function calculateExpression(input) {
   }
 
   function term() {
-    let value = power();
+    let value = unary();
 
     while (peek() === "*" || peek() === "/") {
       const op = consume();
-      const right = power();
+      const right = unary();
 
       if (op === "/" && right === 0) {
         throw new Error("Division by zero");
@@ -231,11 +237,11 @@ function calculateExpression(input) {
   }
 
   function power() {
-    let value = unary();
+    let value = primary();
 
     if (peek() === "^") {
       consume();
-      value = Math.pow(value, power());
+      value = Math.pow(value, unary());
     }
 
     return value;
@@ -252,7 +258,7 @@ function calculateExpression(input) {
       return -unary();
     }
 
-    return primary();
+    return power();
   }
 
   function primary() {
@@ -468,6 +474,10 @@ document.querySelectorAll("[data-calc]").forEach(button => {
     });
 
 });
+
+// Dedicated calculator actions
+$('[data-action="sign"]').addEventListener("click", toggleSign);
+$('[data-action="equals"]').addEventListener("click", calculate);
 
 // =====================================================
 // SMART PARENTHESES BUTTON
@@ -763,13 +773,14 @@ renderHistory();
 function updateProgrammer() {
   const base = Number($("progBase").value);
   const input = $("progInput").value.trim();
+  const validDigits = { 2: /^[+-]?[01]+$/, 8: /^[+-]?[0-7]+$/, 10: /^[+-]?[0-9]+$/, 16: /^[+-]?[0-9a-f]+$/i };
 
   try {
-    if (!input) throw new Error();
+    if (!input || !validDigits[base]?.test(input)) throw new Error();
 
     const value = parseInt(input, base);
 
-    if (!Number.isFinite(value)) throw new Error();
+    if (!Number.isSafeInteger(value)) throw new Error();
 
     $("progDec").textContent = value.toString(10);
     $("progBin").textContent = value.toString(2);
@@ -1896,7 +1907,7 @@ document.addEventListener("click", (event) => {
         return;
     }
 
-    vibrate(10);
+    if (Date.now() - lastVibrationAt >= 80) vibrate(10);
 });
 // =====================================================
 // PHASE 3 — DISPLAY SWIPE GESTURES
