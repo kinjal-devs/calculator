@@ -4,7 +4,39 @@
 // All calculations run locally in your browser.
 // =====================================================
 
+
 const $ = id => document.getElementById(id);
+
+// MENU CONTROLS — initialize before the rest of the app.
+(() => {
+  const menuButton = $("menuBtn");
+  const menuOverlay = $("menuOverlay");
+  const closeButton = $("closeMenu");
+
+  function openMenu() {
+    if (!menuOverlay) return;
+    menuOverlay.classList.remove("hidden");
+    menuOverlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMenu() {
+    if (!menuOverlay) return;
+    menuOverlay.classList.remove("open");
+    menuOverlay.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+
+  menuButton?.addEventListener("click", openMenu);
+  closeButton?.addEventListener("click", closeMenu);
+  menuOverlay?.addEventListener("click", event => {
+    if (event.target === menuOverlay) closeMenu();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeMenu();
+  });
+})();
+
 
 const storage = {
   get(key, fallback) {
@@ -1836,54 +1868,6 @@ if (scientificToggle && scientificToolbar) {
         vibrate();
     });
 }
-
-// =====================================================
-// SPIDER CALC MENU
-// =====================================================
-
-const menuButton = document.getElementById("menuBtn");
-const menuOverlayElement = document.getElementById("menuOverlay");
-const menuCloseButton = document.getElementById("closeMenu");
-
-function openToolsMenu() {
-    if (!menuOverlayElement) return;
-
-    menuOverlayElement.classList.remove("hidden");
-    menuOverlayElement.classList.add("open");
-
-    document.body.style.overflow = "hidden";
-}
-
-function closeToolsMenu() {
-    if (!menuOverlayElement) return;
-
-    menuOverlayElement.classList.remove("open");
-    menuOverlayElement.classList.add("hidden");
-
-    document.body.style.overflow = "";
-}
-
-if (menuButton) {
-    menuButton.addEventListener("click", openToolsMenu);
-}
-
-if (menuCloseButton) {
-    menuCloseButton.addEventListener("click", closeToolsMenu);
-}
-
-if (menuOverlayElement) {
-    menuOverlayElement.addEventListener("click", (event) => {
-        if (event.target === menuOverlayElement) {
-            closeToolsMenu();
-        }
-    });
-}
-
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-        closeToolsMenu();
-    }
-});
 
 // =====================================================
 // PHASE 3 — GLOBAL BUTTON FEEDBACK
