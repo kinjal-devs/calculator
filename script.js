@@ -2003,13 +2003,10 @@ document.addEventListener("keydown", (event) => {
         closeToolsMenu();
     }
 });
-// =====================================================
-// PHASE 3 — GLOBAL BUTTON FEEDBACK
-// =====================================================
 
 // =====================================================
 // PHASE 3 — GLOBAL BUTTON FEEDBACK
-// One vibration per physical button click
+// Centralized haptic feedback
 // =====================================================
 
 document.addEventListener("click", (event) => {
@@ -2017,44 +2014,19 @@ document.addEventListener("click", (event) => {
 
     if (!button || button.disabled) return;
 
-    // These already handle their own feedback
+    // Buttons with dedicated feedback
     if (
         button.matches(".nav-btn") ||
         button.matches(".history-delete") ||
-        button.matches(".copy-btn")
+        button.matches(".copy-btn") ||
+        button.matches("#copyBtn") ||
+        button.matches("[data-copy]")
     ) {
         return;
     }
 
-    // Calculator keys, tools and menu actions
-    if (
-        button.matches(".key") ||
-        button.matches(".tool-button") ||
-        button.matches(".primary-btn") ||
-        button.matches(".secondary-btn") ||
-        button.matches(".icon-btn") ||
-        button.matches(".menu-item") ||
-        button.matches(".toggle-bit") ||
-        button.matches(".small-btn") ||
-        button.matches(".text-btn") ||
-        button.matches(".danger-btn") ||
-        button.matches(".history-item button") ||
-        button.matches("[data-bit]") ||
-        button.matches("[data-matrix]") ||
-        button.matches("[data-complex]") ||
-        button.matches("[data-fraction]") ||
-        button.matches("[data-equation-type]") ||
-        button.matches("[data-math-mode]") ||
-        button.matches("[data-college-mode]") ||
-        button.matches("[data-gray-mode]")
-    ) {
-        vibrate(8);
-    }
+    vibrate(10);
 });
-
-// =====================================================
-// PHASE 3 — DISPLAY SWIPE GESTURES
-// =====================================================
 
 // =====================================================
 // PHASE 3 — DISPLAY SWIPE GESTURES
