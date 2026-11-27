@@ -1,0 +1,9 @@
+{
+  "appId": "com.kinjal.calcula",
+  "appName": "Calcula",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": false
+  }
+}
