@@ -366,6 +366,39 @@ function updateDisplay() {
   }
 }
 
+// =====================================================
+// CALCULATE — EQUALS BUTTON
+// =====================================================
+
+function calculate() {
+
+    if (!expression.trim()) return;
+
+    const currentExpression = expression;
+
+    try {
+
+        const result = calculateExpression(currentExpression);
+
+        lastResult = formatNumber(result);
+
+        $("result").textContent = lastResult;
+
+        addHistory(currentExpression, lastResult);
+
+        toast("Calculation successful!");
+        vibrate(15);
+
+    } catch (error) {
+
+        $("result").textContent = "Error";
+
+        toast(error.message || "Invalid expression");
+
+        vibrate(30);
+    }
+}
+
 function insertCalc(value) {
     if (expression === "Error") {
         expression = "";
@@ -413,54 +446,47 @@ function toggleSign() {
   updateDisplay();
 }
 
-function calculate() {
-    if (!expression) return;
+// =====================================================
+// NORMAL CALCULATOR BUTTONS — SINGLE LISTENER
+// =====================================================
 
-    let answer;
+// AC AND BACKSPACE BUTTONS
 
-    // Only catch calculation errors
-    try {
-        answer = calculateExpression(expression);
-    } catch (error) {
-        $("result").textContent = "Error";
+document.querySelector('[data-action="clear"]')
+    ?.addEventListener("click", clearCalc);
 
-        if (typeof toast === "function") {
-            toast(error.message);
-        }
-
-        return;
-    }
-
-    // Successful calculation
-    lastResult = formatNumber(answer);
-
-    addHistory(expression, lastResult);
-
-    expression = lastResult;
-    updateDisplay();
-
-    // Toast should never turn a correct result into an error
-    if (typeof toast === "function") {
-        toast("Calculated");
-    }
-
-    vibrate();
-}
-
+document.querySelector('[data-action="backspace"]')
+    ?.addEventListener("click", backspace);
+    
 document.querySelectorAll("[data-calc]").forEach(button => {
-  button.addEventListener("click", () => insertCalc(button.dataset.calc));
+
+    // The % button is handled separately below
+   if (button.dataset.calc === "parentheses") return;
+
+    button.addEventListener("click", () => {
+        insertCalc(button.dataset.calc);
+    });
+
 });
 
-document.querySelectorAll("[data-action]").forEach(button => {
-  button.addEventListener("click", () => {
-    const action = button.dataset.action;
+// =====================================================
+// SMART PARENTHESES BUTTON
+// =====================================================
 
-    if (action === "clear") clearCalc();
-    if (action === "backspace") backspace();
-    if (action === "sign") toggleSign();
-    if (action === "equals") calculate();
-  });
-});
+const parenthesisButton = document.querySelector(
+    '[data-calc="parentheses"]'
+);
+
+if (parenthesisButton) {
+    parenthesisButton.addEventListener("click", () => {
+        const openCount = (expression.match(/\(/g) || []).length;
+        const closeCount = (expression.match(/\)/g) || []).length;
+
+        insertCalc(openCount > closeCount ? ")" : "(");
+
+        vibrate(10);
+    });
+}
 
 // =====================================================
 // PHASE 3 — IMPROVED KEYBOARD SUPPORT
@@ -543,11 +569,6 @@ document.querySelectorAll("[data-memory]").forEach(button => {
 $("copyBtn").addEventListener("click", () => {
   copyText(lastResult);
 });
-
-
-// =====================================================
-// PHASE 3 — HISTORY TIMESTAMPS
-// =====================================================
 
 // =====================================================
 // PHASE 3 — COMPLETE HISTORY SYSTEM
@@ -1641,157 +1662,6 @@ document.querySelectorAll("[data-fraction]").forEach(button => {
   });
 });
 
-
-// =====================================================
-// COLLEGE TOOLS
-// =====================================================
-
-document.querySelectorAll("[data-college-mode]").forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll("[data-college-mode]").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".college-panel").forEach(p => p.classList.remove("active"));
-
-    button.classList.add("active");
-    $(button.dataset.collegeMode + "Panel").classList.add("active");
-  });
-});
-
-
-// Marks
-
-$("calculateMarks").addEventListener("click", () => {
-  const obtained = getNumber("marksObtained");
-  const total = getNumber("marksTotal");
-
-  if (total <= 0 || obtained < 0 || obtained > total) {
-    $("marksResult").textContent = "Enter valid marks.";
-    return;
-  }
-
-  const percentage = obtained / total * 100;
-
-  $("marksResult").innerHTML =
-    `Percentage: <strong>${formatNumber(percentage)}%</strong>`;
-});
-
-
-// Attendance
-
-$("calculateAttendance").addEventListener("click", () => {
-  const attended = getNumber("attended");
-  const conducted = getNumber("conducted");
-  const required = getNumber("requiredAttendance");
-
-  if (
-    conducted <= 0 ||
-    attended < 0 ||
-    attended > conducted ||
-    required < 0 ||
-    required > 100
-  ) {
-    $("attendanceResult").textContent = "Enter valid attendance.";
-    return;
-  }
-
-  const percentage = attended / conducted * 100;
-
-  let message = `Current attendance: ${formatNumber(percentage)}%`;
-
-  if (percentage >= required) {
-    const maxMiss = Math.floor((attended * 100 / required) - conducted);
-
-    message += `<br>You may miss approximately ${Math.max(0, maxMiss)} additional classes and remain at the required percentage.`;
-  } else {
-    const need = Math.ceil(
-      (required * conducted - 100 * attended) / (100 - required)
-    );
-
-    message += `<br>Attend the next ${Math.max(0, need)} classes consecutively to reach ${required}%.`;
-  }
-
-  $("attendanceResult").innerHTML = message;
-});
-
-
-// Exam target
-
-$("calculateTarget").addEventListener("click", () => {
-  const current = getNumber("targetCurrent");
-  const total = getNumber("targetTotal");
-  const target = getNumber("targetPercent");
-
-  if (
-    total <= 0 ||
-    current < 0 ||
-    current > total ||
-    target < 0 ||
-    target > 100
-  ) {
-    $("targetResult").textContent = "Enter valid values.";
-    return;
-  }
-
-  const required = total * target / 100;
-
-  $("targetResult").innerHTML =
-    `Marks needed: <strong>${formatNumber(required)}</strong><br>
-     Remaining marks to target: <strong>${formatNumber(Math.max(0, required - current))}</strong><br>
-     Current percentage: ${formatNumber(current / total * 100)}%`;
-});
-
-
-// GPA rows
-
-function addGpaRow() {
-  const row = document.createElement("div");
-  row.className = "three-inputs gpa-row";
-  row.style.marginTop = "8px";
-
-  row.innerHTML = `
-    <input type="number" placeholder="Grade points" value="8" step="0.1">
-    <input type="number" placeholder="Credits" value="3">
-    <button class="tool-button remove-gpa">✕</button>
-  `;
-
-  row.querySelector(".remove-gpa").addEventListener("click", () => row.remove());
-
-  $("gpaRows").appendChild(row);
-}
-
-$("addGpaRow").addEventListener("click", addGpaRow);
-
-addGpaRow();
-addGpaRow();
-addGpaRow();
-
-$("calculateGpa").addEventListener("click", () => {
-  const rows = [...document.querySelectorAll(".gpa-row")];
-
-  let weighted = 0;
-  let credits = 0;
-
-  rows.forEach(row => {
-    const inputs = row.querySelectorAll("input");
-    const grade = Number(inputs[0].value);
-    const credit = Number(inputs[1].value);
-
-    if (grade >= 0 && credit > 0) {
-      weighted += grade * credit;
-      credits += credit;
-    }
-  });
-
-  if (!credits) {
-    $("gpaResult").textContent = "Enter grades and credits.";
-    return;
-  }
-
-  $("gpaResult").innerHTML =
-    `Total credits: ${credits}<br>
-     GPA: <strong>${formatNumber(weighted / credits)}</strong>`;
-});
-
-
 // =====================================================
 // UNIT CONVERTER
 // =====================================================
@@ -2020,14 +1890,14 @@ document.addEventListener("click", (event) => {
         button.matches(".history-delete") ||
         button.matches(".copy-btn") ||
         button.matches("#copyBtn") ||
-        button.matches("[data-copy]")
+        button.matches("[data-copy]") ||
+        button.matches('[data-calc="%"]')
     ) {
         return;
     }
 
     vibrate(10);
 });
-
 // =====================================================
 // PHASE 3 — DISPLAY SWIPE GESTURES
 // =====================================================

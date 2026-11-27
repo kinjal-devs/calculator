@@ -1519,10 +1519,6 @@ button:not(:disabled):active {
    PHASE 3 — PAGE TRANSITIONS
 ===================================================== */
 
-.page.active {
-    animation: pageEnter 0.22s ease;
-}
-
 @keyframes pageEnter {
     from {
         opacity: 0;

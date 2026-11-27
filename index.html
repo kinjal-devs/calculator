@@ -67,12 +67,6 @@
             <span class="menu-arrow">›</span>
           </button>
 
-          <button class="nav-btn menu-item" data-page="college">
-            <span class="menu-icon">🎓</span>
-            <span class="menu-label">College Tools</span>
-            <span class="menu-arrow">›</span>
-          </button>
-
           <button class="nav-btn menu-item" data-page="converter">
             <span class="menu-icon">🔄</span>
             <span class="menu-label">Unit Converter</span>
@@ -93,7 +87,7 @@
             <div class="keypad">
               <button class="key utility" data-action="clear">AC</button>
               <button class="key utility" data-action="backspace">⌫</button>
-              <button class="key utility" data-calc="%">%</button>
+             <button class="key utility" data-calc="parentheses">()</button>
               <button class="key operator" data-calc="/">÷</button>
 
               <button class="key" data-calc="7">7</button>
@@ -605,84 +599,7 @@
             </div>
           </div>
         </section>
-
-        <!-- COLLEGE -->
-        <section class="page" id="college">
-          <div class="card">
-            <h2>College Tools</h2>
-
-            <div class="tool-tabs">
-              <button class="active" data-college-mode="marks">Marks</button>
-              <button data-college-mode="attendance">Attendance</button>
-              <button data-college-mode="target">Exam Target</button>
-              <button data-college-mode="gpa">GPA</button>
-            </div>
-
-            <div class="college-panel active" id="marksPanel">
-              <h3>Percentage calculator</h3>
-              <label>Marks obtained</label>
-              <input id="marksObtained" type="number" value="420" />
-
-              <label>Total marks</label>
-              <input id="marksTotal" type="number" value="500" />
-
-              <button class="primary-btn" id="calculateMarks">
-                Calculate percentage
-              </button>
-              <div id="marksResult" class="output-box">—</div>
-            </div>
-
-            <div class="college-panel" id="attendancePanel">
-              <h3>Attendance calculator</h3>
-
-              <label>Classes attended</label>
-              <input id="attended" type="number" value="36" />
-
-              <label>Total classes conducted</label>
-              <input id="conducted" type="number" value="45" />
-
-              <label>Required attendance (%)</label>
-              <input id="requiredAttendance" type="number" value="75" />
-
-              <button class="primary-btn" id="calculateAttendance">
-                Calculate
-              </button>
-              <div id="attendanceResult" class="output-box">—</div>
-            </div>
-
-            <div class="college-panel" id="targetPanel">
-              <h3>Exam target calculator</h3>
-
-              <label>Current marks</label>
-              <input id="targetCurrent" type="number" value="35" />
-
-              <label>Total marks</label>
-              <input id="targetTotal" type="number" value="100" />
-
-              <label>Desired percentage</label>
-              <input id="targetPercent" type="number" value="80" />
-
-              <button class="primary-btn" id="calculateTarget">
-                Calculate target
-              </button>
-              <div id="targetResult" class="output-box">—</div>
-            </div>
-
-            <div class="college-panel" id="gpaPanel">
-              <h3>GPA / CGPA calculator</h3>
-              <p>Enter grades and credits. Add more subjects as needed.</p>
-
-              <div id="gpaRows"></div>
-
-              <button class="tool-button" id="addGpaRow">＋ Add subject</button>
-              <button class="primary-btn" id="calculateGpa">
-                Calculate GPA
-              </button>
-              <div id="gpaResult" class="output-box">—</div>
-            </div>
-          </div>
-        </section>
-
+     
         <!-- CONVERTER -->
         <section class="page" id="converter">
           <div class="card">
