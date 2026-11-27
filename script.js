@@ -34,26 +34,6 @@ let equationType = "linear";
 let matrixSize = 3;
 let toastTimer;
 
-
-// =====================================================
-// GENERAL UTILITIES
-// =====================================================
-
-function formatHistoryTime(timestamp) {
-    const date = new Date(timestamp);
-
-    if (isNaN(date.getTime())) {
-        return "";
-    }
-
-    return date.toLocaleString([], {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-}
-
 // =====================================================
 // PHASE 3 — HAPTIC FEEDBACK
 // =====================================================
@@ -434,22 +414,37 @@ function toggleSign() {
 }
 
 function calculate() {
-  if (!expression) return;
+    if (!expression) return;
 
-  try {
-    const answer = calculateExpression(expression);
+    let answer;
+
+    // Only catch calculation errors
+    try {
+        answer = calculateExpression(expression);
+    } catch (error) {
+        $("result").textContent = "Error";
+
+        if (typeof toast === "function") {
+            toast(error.message);
+        }
+
+        return;
+    }
+
+    // Successful calculation
     lastResult = formatNumber(answer);
 
     addHistory(expression, lastResult);
 
     expression = lastResult;
     updateDisplay();
-    toast("Calculated");
+
+    // Toast should never turn a correct result into an error
+    if (typeof toast === "function") {
+        toast("Calculated");
+    }
+
     vibrate();
-  } catch (error) {
-    $("result").textContent = "Error";
-    toast(error.message);
-  }
 }
 
 document.querySelectorAll("[data-calc]").forEach(button => {
@@ -466,10 +461,6 @@ document.querySelectorAll("[data-action]").forEach(button => {
     if (action === "equals") calculate();
   });
 });
-
-// =====================================================
-// KEYBOARD INPUT
-// =====================================================
 
 // =====================================================
 // PHASE 3 — IMPROVED KEYBOARD SUPPORT
@@ -496,35 +487,30 @@ document.addEventListener("keydown", (event) => {
         return;
     }
 
-    if (/^[0-9]$/.test(event.key)) {
-        insertCalc(event.key);
-        vibrate(8);
-        return;
-    }
+   if (/^[0-9]$/.test(event.key)) {
+    insertCalc(event.key);
+    return;
+}
 
     if (["+", "-", "*", "/", ".", "%", "(", ")"].includes(event.key)) {
         insertCalc(event.key);
-        vibrate(8);
         return;
     }
 
     if (event.key === "Enter" || event.key === "=") {
         event.preventDefault();
         calculate();
-        vibrate(15);
         return;
     }
 
     if (event.key === "Backspace") {
         event.preventDefault();
         backspace();
-        vibrate(8);
         return;
     }
 
     if (event.key === "Escape") {
         clearCalc();
-        vibrate(12);
     }
 });
 
@@ -2021,11 +2007,26 @@ document.addEventListener("keydown", (event) => {
 // PHASE 3 — GLOBAL BUTTON FEEDBACK
 // =====================================================
 
+// =====================================================
+// PHASE 3 — GLOBAL BUTTON FEEDBACK
+// One vibration per physical button click
+// =====================================================
+
 document.addEventListener("click", (event) => {
     const button = event.target.closest("button");
 
     if (!button || button.disabled) return;
 
+    // These already handle their own feedback
+    if (
+        button.matches(".nav-btn") ||
+        button.matches(".history-delete") ||
+        button.matches(".copy-btn")
+    ) {
+        return;
+    }
+
+    // Calculator keys, tools and menu actions
     if (
         button.matches(".key") ||
         button.matches(".tool-button") ||
@@ -2033,28 +2034,46 @@ document.addEventListener("click", (event) => {
         button.matches(".secondary-btn") ||
         button.matches(".icon-btn") ||
         button.matches(".menu-item") ||
-        button.matches(".toggle-bit")
+        button.matches(".toggle-bit") ||
+        button.matches(".small-btn") ||
+        button.matches(".text-btn") ||
+        button.matches(".danger-btn") ||
+        button.matches(".history-item button") ||
+        button.matches("[data-bit]") ||
+        button.matches("[data-matrix]") ||
+        button.matches("[data-complex]") ||
+        button.matches("[data-fraction]") ||
+        button.matches("[data-equation-type]") ||
+        button.matches("[data-math-mode]") ||
+        button.matches("[data-college-mode]") ||
+        button.matches("[data-gray-mode]")
     ) {
         vibrate(8);
     }
 });
+
+// =====================================================
+// PHASE 3 — DISPLAY SWIPE GESTURES
+// =====================================================
+
 // =====================================================
 // PHASE 3 — DISPLAY SWIPE GESTURES
 // =====================================================
 
 (() => {
     const display = document.querySelector(".display");
-
     if (!display) return;
 
     let startX = 0;
     let startY = 0;
+    let startTime = 0;
 
     display.addEventListener("touchstart", (event) => {
         const touch = event.changedTouches[0];
 
         startX = touch.clientX;
         startY = touch.clientY;
+        startTime = Date.now();
     }, { passive: true });
 
     display.addEventListener("touchend", (event) => {
@@ -2062,10 +2081,12 @@ document.addEventListener("click", (event) => {
 
         const diffX = touch.clientX - startX;
         const diffY = touch.clientY - startY;
+        const duration = Date.now() - startTime;
 
-        // Only count deliberate horizontal swipes
-        if (Math.abs(diffX) < 65) return;
-        if (Math.abs(diffX) < Math.abs(diffY)) return;
+        // Ignore accidental or slow gestures
+        if (Math.abs(diffX) < 80) return;
+        if (Math.abs(diffX) < Math.abs(diffY) * 1.3) return;
+        if (duration > 500) return;
 
         if (diffX > 0) {
             backspace();
@@ -2075,6 +2096,6 @@ document.addEventListener("click", (event) => {
             toast("Calculator cleared");
         }
 
-        vibrate(15);
+        vibrate(12);
     }, { passive: true });
 })();

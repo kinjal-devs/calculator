@@ -518,11 +518,32 @@ th {
   min-width: 0;
 }
 
+/* ===== COMPACT MATH TOOL TABS ===== */
+
 .tool-tabs {
-  display: flex;
-  gap: 7px;
-  overflow-x: auto;
-  margin: 15px 0;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 15px 0;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tool-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tool-tabs button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    min-height: 42px;
+    padding: 10px 16px;
+    white-space: nowrap;
+    border-radius: 12px;
+    font-size: 13px;
 }
 
 .tool-tabs button {
@@ -1724,5 +1745,134 @@ button:disabled {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+/* =====================================================
+   PHASE 3 — FINAL CLEANUP & TRANSITION FIXES
+===================================================== */
+
+/* No entry animation on the calculator itself */
+.page.active:not(#calculator) {
+    animation: pageEnter 0.22s ease;
+}
+
+#calculator.page.active {
+    animation: none !important;
+    transform: none !important;
+}
+
+/* Prevent animation from shifting the calculator */
+@media (min-width: 700px) {
+    #calculator.page.active {
+        animation: none !important;
+    }
+}
+
+/* Consistent button feedback */
+button:focus-visible {
+    outline: 2px solid #ff555f;
+    outline-offset: 3px;
+}
+
+/* Avoid double transform effects */
+.key:active {
+    transform: scale(0.92);
+}
+
+/* Keep swipe display responsive */
+#calculator .display {
+    touch-action: pan-y;
+}
+
+/* Final accessibility override */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+/* =========================================
+   FINAL FIX — COMPACT MATH TOOL BUTTONS
+========================================= */
+
+.math-panel,
+.college-panel,
+.page {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Math mode tabs */
+div:has(> [data-math-mode]) {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0;
+    margin: 12px 0;
+}
+
+/* Compact tabs */
+[data-math-mode] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: none !important;
+
+    padding: 10px 8px !important;
+    min-height: 42px !important;
+
+    font-size: 12px !important;
+    white-space: normal !important;
+    text-align: center;
+
+    border-radius: 10px !important;
+}
+
+/* Other tool tabs */
+.tool-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+
+    width: 100%;
+    overflow: visible !important;
+}
+
+.tool-tabs button {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 10px 6px !important;
+    min-height: 42px !important;
+
+    font-size: 12px !important;
+    white-space: normal !important;
+}
+
+/* Prevent oversized buttons */
+.primary-btn,
+.tool-button,
+.secondary-btn {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Prevent content from pushing beyond screen */
+.button-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 360px) {
+    [data-math-mode],
+    .tool-tabs button {
+        font-size: 11px !important;
+        padding: 8px 5px !important;
     }
 }
