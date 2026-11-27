@@ -9,72 +9,9 @@
   </head>
   <body>
     <div class="app">
-      <input type="checkbox" id="menuToggle" class="menu-toggle" aria-label="Open tools menu" />
       <header class="topbar">
-        <label id="menuBtn" class="icon-btn menu-trigger" for="menuToggle" title="Tools menu">☰</label>
+        <button id="menuBtn" class="icon-btn menu-trigger" type="button" title="Tools menu" aria-label="Open tools menu">☰</button>
       </header>
-
-      <!-- PASTE MENU DRAWER HERE -->
-      <div class="menu-overlay hidden" id="menuOverlay">
-        <aside class="menu-drawer">
-          <div class="menu-brand">
-            <div class="spider-logo">🕷️</div>
-
-            <div class="brand-text">
-              <h2>SPIDER CALC</h2>
-              <p>YOUR FRIENDLY NEIGHBORHOOD CALCULATOR</p>
-            </div>
-
-            <label id="closeMenu" class="icon-btn menu-close" for="menuToggle" title="Close menu">✕</label>
-          </div>
-
-          <div class="menu-divider"></div>
-
-          <p class="menu-subtitle">CALCULATOR TOOLS</p>
-
-          <button class="nav-btn menu-item active" data-page="calculator">
-            <span class="menu-icon">🧮</span>
-            <span class="menu-label">Calculator</span>
-            <span class="menu-arrow">›</span>
-          </button>
-
-          <button class="nav-btn menu-item" data-page="programmer">
-            <span class="menu-icon">💻</span>
-            <span class="menu-label">Programmer</span>
-            <span class="menu-arrow">›</span>
-          </button>
-
-          <button class="nav-btn menu-item" data-page="gray">
-            <span class="menu-icon">🔢</span>
-            <span class="menu-label">Gray Code</span>
-            <span class="menu-arrow">›</span>
-          </button>
-
-          <button class="nav-btn menu-item" data-page="logic">
-            <span class="menu-icon">⚡</span>
-            <span class="menu-label">Logic Lab</span>
-            <span class="menu-arrow">›</span>
-          </button>
-
-          <button class="nav-btn menu-item" data-page="matrix">
-            <span class="menu-icon">▦</span>
-            <span class="menu-label">Matrix</span>
-            <span class="menu-arrow">›</span>
-          </button>
-
-          <button class="nav-btn menu-item" data-page="math">
-            <span class="menu-icon">π</span>
-            <span class="menu-label">Math Tools</span>
-            <span class="menu-arrow">›</span>
-          </button>
-
-          <button class="nav-btn menu-item" data-page="converter">
-            <span class="menu-icon">🔄</span>
-            <span class="menu-label">Unit Converter</span>
-            <span class="menu-arrow">›</span>
-          </button>
-        </aside>
-      </div>
 
       <main>
         <!-- CALCULATOR -->
@@ -635,7 +572,69 @@
       </main>
     </div>
 
-   <!-- HISTORY MODAL -->
+   <!--       <div class="menu-overlay hidden" id="menuOverlay">
+        <aside class="menu-drawer">
+          <div class="menu-brand">
+            <div class="spider-logo">🕷️</div>
+
+            <div class="brand-text">
+              <h2>SPIDER CALC</h2>
+              <p>YOUR FRIENDLY NEIGHBORHOOD CALCULATOR</p>
+            </div>
+
+            <label id="closeMenu" class="icon-btn menu-close" for="menuToggle" title="Close menu">✕</label>
+          </div>
+
+          <div class="menu-divider"></div>
+
+          <p class="menu-subtitle">CALCULATOR TOOLS</p>
+
+          <button class="nav-btn menu-item active" data-page="calculator">
+            <span class="menu-icon">🧮</span>
+            <span class="menu-label">Calculator</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="programmer">
+            <span class="menu-icon">💻</span>
+            <span class="menu-label">Programmer</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="gray">
+            <span class="menu-icon">🔢</span>
+            <span class="menu-label">Gray Code</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="logic">
+            <span class="menu-icon">⚡</span>
+            <span class="menu-label">Logic Lab</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="matrix">
+            <span class="menu-icon">▦</span>
+            <span class="menu-label">Matrix</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="math">
+            <span class="menu-icon">π</span>
+            <span class="menu-label">Math Tools</span>
+            <span class="menu-arrow">›</span>
+          </button>
+
+          <button class="nav-btn menu-item" data-page="converter">
+            <span class="menu-icon">🔄</span>
+            <span class="menu-label">Unit Converter</span>
+            <span class="menu-arrow">›</span>
+          </button>
+        </aside>
+      </div>
+
+
+HISTORY MODAL -->
 <div class="modal hidden" id="historyModal">
   <div class="modal-content">
     <div class="modal-header">
